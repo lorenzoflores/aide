@@ -22,6 +22,32 @@ else
     echo "✔ Ollama ya está instalado."
 fi
 
+# 3.1 Descarga del modelo específico para programación
+echo "📥 Descargando el cerebro del entorno (Qwen3.5)..."
+
+# Usamos pull para que sea una descarga no interactiva
+ollama pull qwen3.5:latest
+
+echo "✅ Modelo listo para usar localmente."
+
+# 3.2 Configuración de parámetros del servicio Ollama
+echo "⚙️ Ampliando el contexto de Ollama a 32,768 tokens..."
+
+# Creamos el directorio de configuración si no existe
+sudo mkdir -p /etc/systemd/system/ollama.service.d
+
+# Creamos el archivo de override para inyectar la variable de entorno
+cat <<EOF | sudo tee /etc/systemd/system/ollama.service.d/override.conf
+[Service]
+Environment="OLLAMA_NUM_CTX=32768"
+EOF
+
+# Recargamos systemd y reiniciamos el servicio para aplicar cambios
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+
+echo "✅ Contexto ampliado y servicio reiniciado."
+
 # 4. Instalación de OpenCode.ai
 echo "🤖 Instalando OpenCode.ai (Software Libre de IA)..."
 if curl -fsSL https://opencode.ai/install | bash; then
@@ -64,6 +90,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.termguicolors = true
 EOF
+
 
 # 6. Optimización de la experiencia en terminal (Bash History Search)
 echo "⌨️ Configurando búsqueda rápida en el historial..."
