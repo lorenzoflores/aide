@@ -22,14 +22,28 @@ else
     echo "✔ Ollama ya está instalado."
 fi
 
-# 4. Instalación de Neovim (Última versión estable)
-# Debian 12 suele tener versiones antiguas, instalamos la versión estable más reciente vía AppImage o binario.
+# 4. Instalación de Neovim (Versión estable con manejo de errores)
 echo "🌑 Instalando Neovim..."
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-sudo rm -rf /opt/nvim
-sudo tar -C /opt -xzf nvim-linux64.tar.gz
-echo 'export PATH="$PATH:/opt/nvim-linux64/bin"' >> ~/.bashrc
-export PATH="$PATH:/opt/nvim-linux64/bin"
+# Usamos -L para seguir redirecciones y nos aseguramos de la URL exacta
+curl -sSL -O https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz
+
+# Verificamos si el archivo se descargó correctamente antes de descomprimir
+if file nvim-linux64.tar.gz | grep -q 'gzip compressed data'; then
+    sudo rm -rf /opt/nvim-linux64
+    sudo tar -C /opt -xzf nvim-linux64.tar.gz
+    
+    # Actualizamos el PATH solo si no está ya presente
+    if ! grep -q "/opt/nvim-linux64/bin" ~/.bashrc; then
+        echo 'export PATH="$PATH:/opt/nvim-linux64/bin"' >> ~/.bashrc
+    fi
+    export PATH="$PATH:/opt/nvim-linux64/bin"
+    rm nvim-linux64.tar.gz
+    echo "✅ Neovim instalado correctamente."
+else
+    echo "❌ Error: El archivo descargado no es un gzip válido. Revisa la conexión o la URL."
+    exit 1
+fi
+
 
 # 5. Configuración de OpenCode.nvim
 # OpenCode.nvim requiere un gestor de plugins. Usaremos 'lazy.nvim' por ser el estándar actual.
