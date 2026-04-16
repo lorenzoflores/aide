@@ -126,3 +126,24 @@ if ! grep -q "/opt/nvim-linux64/bin" ~/.bashrc; then
 fi
 # Aplicar al proceso actual del script
 export PATH="/opt/nvim-linux64/bin:$PATH"
+
+# 8. Instalación de Aider (AI Pair Programming)
+echo "🤖 Instalando Aider..."
+# Instalamos pipx si no está para manejar aplicaciones Python de forma aislada
+sudo apt install -y pipx
+pipx ensurepath
+# Instalamos aider-chat
+pipx install aider-chat
+
+# Aseguramos que los binarios de pipx estén disponibles en la sesión actual
+export PATH="$PATH:$HOME/.local/bin"
+
+# Añadiendo alias para Aider con Qwen
+cat <<EOF >> ~/.bash_aliases
+
+# Aider con modelo local de Ollama
+alias aider-qwen='export OLLAMA_API_BASE=http://127.0.0.1:11434 && aider --model ollama_chat/qwenr3.5'
+EOF
+
+# Recargar alias
+source ~/.bashrc
