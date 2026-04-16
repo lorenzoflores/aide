@@ -22,49 +22,50 @@ else
     echo "✔ Ollama ya está instalado."
 fi
 
-# 4. Configuración de OpenCode.nvim
-# OpenCode.nvim requiere un gestor de plugins. Usaremos 'lazy.nvim' por ser el estándar actual.
-echo "🧩 Configurando Neovim con OpenCode.nvim..."
+# 4. Instalación de OpenCode.ai
+echo "🤖 Instalando OpenCode.ai (Software Libre de IA)..."
+if curl -fsSL https://opencode.ai/install | bash; then
+    echo "✅ OpenCode.ai instalado correctamente."
+else
+    echo "❌ Falló la instalación de OpenCode.ai."
+    # No detenemos el script aquí por si el resto de herramientas son funcionales
+fi
+
+# 5. Configuración de Neovim para integrar OpenCode
+echo "🧩 Vinculando OpenCode con Neovim..."
 mkdir -p ~/.config/nvim
 
+# Sobrescribimos o creamos el init.lua para que use el plugin oficial
 cat <<EOF > ~/.config/nvim/init.lua
--- Instalación automática de Lazy.nvim
+-- Instalación automática de Lazy.nvim (gestor de plugins)
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({
-    "git", "clone", "--filter=blob:none",
-    "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath,
-  })
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Configuración de plugins
 require("lazy").setup({
   {
     "is0n/opencode.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("opencode").setup({
-        -- Aquí puedes personalizar la conexión con Ollama
         provider = "ollama",
-        model = "codellama", -- Asegúrate de descargar este modelo luego
+        model = "qwen2.5-coder", -- Recomendado para transformación digital sanitaria por su precisión
       })
     end
   },
-  -- Tema visual para consola
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+  { "catppuccin/nvim", name = "catppuccin", priority = 1000 }
 })
 
+-- Configuraciones básicas de UI
 vim.cmd.colorscheme "catppuccin"
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.termguicolors = true
 EOF
 
-echo "✨ Proceso finalizado."
-echo "⚠️  RECUERDA: Ejecuta 'ollama run codellama' en otra terminal para descargar el modelo de IA."
-echo "Recarga tu terminal con: source ~/.bashrc"
-
-# 5. Optimización de la experiencia en terminal (Bash History Search)
+# 6. Optimización de la experiencia en terminal (Bash History Search)
 echo "⌨️ Configurando búsqueda rápida en el historial..."
 if [ ! -f ~/.inputrc ]; then
     touch ~/.inputrc
@@ -83,3 +84,6 @@ EOF
 else
     echo "✔ La configuración de historial ya existe."
 fi
+
+echo "✨ Proceso finalizado."
+echo "Recarga tu terminal con: source ~/.bashrc"
