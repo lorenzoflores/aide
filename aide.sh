@@ -10,6 +10,10 @@ echo "📦 Actualizando repositorios..."
 sudo apt update && sudo apt upgrade -y
 
 # 2. Instalación de dependencias básicas
+
+# Eliminar versión de repositorios si existe para evitar conflictos
+sudo apt remove -y neovim neovim-runtime
+
 echo "🛠️ Instalando dependencias de compilación y herramientas base..."
 sudo apt install -y curl git build-essential unzip gettext lua5.1 liblua5.1-0-dev python3-pip neovim
 
@@ -114,3 +118,11 @@ fi
 
 echo "✨ Proceso finalizado."
 echo "Recarga tu terminal con: source ~/.bashrc"
+
+# 7. Cambiamos el path
+# Forzamos que la versión nueva sea la preferida
+if ! grep -q "/opt/nvim-linux64/bin" ~/.bashrc; then
+    echo 'export PATH="/opt/nvim-linux64/bin:$PATH"' >> ~/.bashrc
+fi
+# Aplicar al proceso actual del script
+export PATH="/opt/nvim-linux64/bin:$PATH"
