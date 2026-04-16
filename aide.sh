@@ -11,7 +11,7 @@ sudo apt update && sudo apt upgrade -y
 
 # 2. Instalación de dependencias básicas
 echo "🛠️ Instalando dependencias de compilación y herramientas base..."
-sudo apt install -y curl git build-essential unzip gettext lua5.1 liblua5.1-0-dev python3-pip
+sudo apt install -y curl git build-essential unzip gettext lua5.1 liblua5.1-0-dev python3-pip neovim
 
 # 3. Instalación de Ollama (IA Local)
 echo "🧠 Instalando Ollama..."
@@ -22,30 +22,7 @@ else
     echo "✔ Ollama ya está instalado."
 fi
 
-# 4. Instalación de Neovim (Versión estable con manejo de errores)
-echo "🌑 Instalando Neovim..."
-# Usamos -L para seguir redirecciones y nos aseguramos de la URL exacta
-curl -sSL -O https://github.com/neovim/neovim/releases/download/stable/nvim-linux64.tar.gz
-
-# Verificamos si el archivo se descargó correctamente antes de descomprimir
-if file nvim-linux64.tar.gz | grep -q 'gzip compressed data'; then
-    sudo rm -rf /opt/nvim-linux64
-    sudo tar -C /opt -xzf nvim-linux64.tar.gz
-    
-    # Actualizamos el PATH solo si no está ya presente
-    if ! grep -q "/opt/nvim-linux64/bin" ~/.bashrc; then
-        echo 'export PATH="$PATH:/opt/nvim-linux64/bin"' >> ~/.bashrc
-    fi
-    export PATH="$PATH:/opt/nvim-linux64/bin"
-    rm nvim-linux64.tar.gz
-    echo "✅ Neovim instalado correctamente."
-else
-    echo "❌ Error: El archivo descargado no es un gzip válido. Revisa la conexión o la URL."
-    exit 1
-fi
-
-
-# 5. Configuración de OpenCode.nvim
+# 4. Configuración de OpenCode.nvim
 # OpenCode.nvim requiere un gestor de plugins. Usaremos 'lazy.nvim' por ser el estándar actual.
 echo "🧩 Configurando Neovim con OpenCode.nvim..."
 mkdir -p ~/.config/nvim
@@ -87,7 +64,7 @@ echo "✨ Proceso finalizado."
 echo "⚠️  RECUERDA: Ejecuta 'ollama run codellama' en otra terminal para descargar el modelo de IA."
 echo "Recarga tu terminal con: source ~/.bashrc"
 
-i# 6. Optimización de la experiencia en terminal (Bash History Search)
+# 5. Optimización de la experiencia en terminal (Bash History Search)
 echo "⌨️ Configurando búsqueda rápida en el historial..."
 if [ ! -f ~/.inputrc ]; then
     touch ~/.inputrc
