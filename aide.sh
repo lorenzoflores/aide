@@ -81,7 +81,7 @@ require("lazy").setup({
     config = function()
       require("opencode").setup({
         provider = "ollama",
-        model = "qwen2.5-coder", -- Recomendado para transformación digital sanitaria por su precisión
+        model = "qwen3.5", -- Recomendado para transformación digital sanitaria por su precisión
       })
     end
   },
@@ -142,7 +142,7 @@ export PATH="$PATH:$HOME/.local/bin"
 cat <<EOF >> ~/.bash_aliases
 
 # Aider con modelo local de Ollama
-alias aider-qwen='export OLLAMA_API_BASE=http://127.0.0.1:11434 && aider --model ollama_chat/qwenr3.5'
+alias aider-qwen='export OLLAMA_API_BASE=http://127.0.0.1:11434 && aider --model ollama_chat/qwen3.5'
 EOF
 
 # Recargar alias
