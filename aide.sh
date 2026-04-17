@@ -11,13 +11,11 @@ sudo apt update && sudo apt upgrade -y
 
 # 2. Instalación de dependencias básicas
 
-# Eliminar versión de repositorios si existe para evitar conflictos
-sudo apt remove -y neovim neovim-runtime
-
 echo "🛠️ Instalando dependencias de compilación y herramientas base..."
-sudo apt install -y curl git build-essential unzip gettext lua5.1 liblua5.1-0-dev python3-pip neovim
+sudo apt install -y curl git build-essential unzip gettext lua5.1 liblua5.1-0-dev python3-pip pipx neovim neovim-runtime
 
 # 3. Instalación de Ollama (IA Local)
+
 echo "🧠 Instalando Ollama..."
 if ! command -v ollama &> /dev/null; then
     curl -fsSL https://ollama.com/install.sh | sh
@@ -63,38 +61,6 @@ fi
 
 # 5. Configuración de Neovim para integrar OpenCode
 echo "🧩 Vinculando OpenCode con Neovim..."
-mkdir -p ~/.config/nvim
-
-# Sobrescribimos o creamos el init.lua para que use el plugin oficial
-cat <<EOF > ~/.config/nvim/init.lua
--- Instalación automática de Lazy.nvim (gestor de plugins)
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
-end
-vim.opt.rtp:prepend(lazypath)
-
-require("lazy").setup({
-  {
-    "is0n/opencode.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require("opencode").setup({
-        provider = "ollama",
-        model = "qwen3.5", -- Recomendado para transformación digital sanitaria por su precisión
-      })
-    end
-  },
-  { "catppuccin/nvim", name = "catppuccin", priority = 1000 }
-})
-
--- Configuraciones básicas de UI
-vim.cmd.colorscheme "catppuccin"
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.termguicolors = true
-EOF
-
 
 # 6. Optimización de la experiencia en terminal (Bash History Search)
 echo "⌨️ Configurando búsqueda rápida en el historial..."
@@ -119,18 +85,9 @@ fi
 echo "✨ Proceso finalizado."
 echo "Recarga tu terminal con: source ~/.bashrc"
 
-# 7. Cambiamos el path
-# Forzamos que la versión nueva sea la preferida
-if ! grep -q "/opt/nvim-linux64/bin" ~/.bashrc; then
-    echo 'export PATH="/opt/nvim-linux64/bin:$PATH"' >> ~/.bashrc
-fi
-# Aplicar al proceso actual del script
-export PATH="/opt/nvim-linux64/bin:$PATH"
+# 7. Instalación de Aider (AI Pair Programming)
 
-# 8. Instalación de Aider (AI Pair Programming)
 echo "🤖 Instalando Aider..."
-# Instalamos pipx si no está para manejar aplicaciones Python de forma aislada
-sudo apt install -y pipx
 pipx ensurepath
 # Instalamos aider-chat
 pipx install aider-chat
